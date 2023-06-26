@@ -28,10 +28,10 @@ class BotCommands:
 def getCommandString(BotCommands):
     return f'''
 NOTE: Try each command without any argument to see more detalis.
-/{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
-/{BotCommands.YtdlCommand[0]} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
-/{BotCommands.LeechCommand[0]} or /{BotCommands.LeechCommand[1]}: Start leeching to Telegram.
-/{BotCommands.YtdlLeechCommand[0]} or /{BotCommands.YtdlLeechCommand[1]}: Leech yt-dlp supported link.
+/{BotCommands.MirrorCommand} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
+/{BotCommands.YtdlCommand} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
+/{BotCommands.LeechCommand} or /{BotCommands.LeechCommand[1]}: Start leeching to Telegram.
+/{BotCommands.YtdlLeechCommand} or /{BotCommands.YtdlLeechCommand[1]}: Leech yt-dlp supported link.
 /{BotCommands.UserSetCommand} [query]: Users settings.
 /{BotCommands.BotSetCommand} [query]: Bot settings.
 /{BotCommands.BtSelectCommand}: Select files from torrents by gid or reply.
@@ -53,21 +53,21 @@ async def set_commands(client, SET_COMMANDS, BotCommands):
     if SET_COMMANDS:
         await client.set_bot_commands([
             BotCommand(
-                f'{BotCommands.MirrorCommand[0]}', f'or /{BotCommands.MirrorCommand[1]} Mirror'),
+                f'{BotCommands.MirrorCommand}', f'or /{BotCommands.MirrorCommand[1]} Mirror'),
             BotCommand(
-                f'{BotCommands.LeechCommand[0]}', f'or /{BotCommands.LeechCommand[1]} Leech'),
+                f'{BotCommands.LeechCommand}', f'or /{BotCommands.LeechCommand[1]} Leech'),
             BotCommand(
-                f'{BotCommands.YtdlCommand[0]}', f'or /{BotCommands.YtdlCommand[1]} Mirror yt-dlp supported link'),
+                f'{BotCommands.YtdlCommand}', f'or /{BotCommands.YtdlCommand[1]} Mirror yt-dlp supported link'),
             BotCommand(
-                f'{BotCommands.YtdlLeechCommand[0]}', f'or /{BotCommands.YtdlLeechCommand[1]} Leech through yt-dlp supported link'),
+                f'{BotCommands.YtdlLeechCommand}', f'or /{BotCommands.YtdlLeechCommand[1]} Leech through yt-dlp supported link'),
             BotCommand(
-                f'{BotCommands.StatusCommand[0]}', f'or /{BotCommands.StatusCommand[1]} Get mirror status message'),
+                f'{BotCommands.StatusCommand}', f'or /{BotCommands.StatusCommand[1]} Get mirror status message'),
             BotCommand(f'{BotCommands.StatsCommand}', 'Check bot stats'),
             BotCommand(f'{BotCommands.BtSelectCommand}',
                        'Select files to download only torrents'),
             BotCommand(f'{BotCommands.CancelMirror}', 'Cancel a Task'),
             BotCommand(
-                f'{BotCommands.CancelAllCommand[0]}', f'Cancel all tasks which added by you or {BotCommands.CancelAllCommand[1]} to in bots.'),
+                f'{BotCommands.CancelAllCommand}', f'Cancel all tasks which added by you or {BotCommands.CancelAllCommand[1]} to in bots.'),
             BotCommand(f'{BotCommands.UserSetCommand}', 'Users settings'),
             BotCommand(f'{BotCommands.BotSetCommand}', 'Bot settings'),
             BotCommand(f'{BotCommands.LogCommand}', 'Bot Logs'),
