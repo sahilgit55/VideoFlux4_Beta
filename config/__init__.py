@@ -206,3 +206,6 @@ if DOWNLOAD_DIR.startswith('/content/'):
         config_dict['BASE_URL_PORT'] = False
 else:
         config_dict['BASE_URL_PORT'] = environ.get("PORT", '80')
+
+config_dict['HEROKU_APP_NAME'] = environ.get("HEROKU_APP_NAME", False)
+config_dict['HEROKU_API_KEY'] = environ.get("HEROKU_API_KEY", False)

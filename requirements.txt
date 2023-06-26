@@ -30,3 +30,4 @@ tgcrypto
 uvloop
 xattr
 yt-dlp
+heroku3

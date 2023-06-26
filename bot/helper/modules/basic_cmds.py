@@ -8,8 +8,9 @@ from sys import executable
 from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
 from asyncio import gather, create_subprocess_exec
+from heroku3 import from_key
 
-from bot import bot, botStartTime, log_file, BotCommands, commands_string
+from bot import bot, botStartTime, log_file, BotCommands, commands_string, config_dict, LOGGER
 from bot.helper.pyrogram.message_utils import sendFile, sendMessage
 from bot.helper.pyrogram.button_build import ButtonMaker
 from bot.helper.utils.other_utils import sync_to_async, cmd_exec, get_readable_file_size, get_readable_time, get_logs_msg
@@ -55,14 +56,24 @@ async def start(_, message):
 
 
 async def restart(_, message):
-    restart_message = await sendMessage(message, "Restarting...")
-    await sync_to_async(clean_all)
-    proc1 = await create_subprocess_exec('pkill', '-9', '-f', 'gunicorn|aria2c|qbittorrent-nox|ffmpeg|rclone')
-    proc2 = await create_subprocess_exec('python3', 'update.py')
-    await gather(proc1.wait(), proc2.wait())
-    async with aiopen(".restartmsg", "w") as f:
-        await f.write(f"{restart_message.chat.id}\n{restart_message.id}\n")
-    osexecl(executable, executable, "-m", "bot")
+    if config_dict['HEROKU_APP_NAME'] and config_dict['HEROKU_API_KEY']:
+            restart_message = await sendMessage(message, "Restarting Heroku Dyno")
+            async with aiopen(".restartmsg", "w") as f:
+                    await f.write(f"{restart_message.chat.id}\n{restart_message.id}\n")
+            heroku_conn = from_key(config_dict['HEROKU_API_KEY'])
+            for dyno in heroku_conn.app(config_dict['HEROKU_APP_NAME']).dynos():
+                LOGGER.info(str(dyno))
+                LOGGER.info(str(dyno.command))
+                dyno.restart()
+    else:
+        restart_message = await sendMessage(message, "Restarting...")
+        await sync_to_async(clean_all)
+        proc1 = await create_subprocess_exec('pkill', '-9', '-f', 'gunicorn|aria2c|qbittorrent-nox|ffmpeg|rclone')
+        proc2 = await create_subprocess_exec('python3', 'update.py')
+        await gather(proc1.wait(), proc2.wait())
+        async with aiopen(".restartmsg", "w") as f:
+            await f.write(f"{restart_message.chat.id}\n{restart_message.id}\n")
+        osexecl(executable, executable, "-m", "bot")
 
 
 async def log(_, message):
