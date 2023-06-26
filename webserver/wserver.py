@@ -3,7 +3,7 @@ from time import sleep
 from aria2p import API as ariaAPI, Client as ariaClient
 from flask import Flask, request
 
-from web.nodes import make_tree
+from webserver.nodes import make_tree
 
 app = Flask(__name__)
 

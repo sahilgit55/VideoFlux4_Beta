@@ -14,7 +14,8 @@ from config.aria_config import aria2, aria2_options, aria2c_global
 
 
 if config_dict['BASE_URL_PORT']:
-    Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{config_dict['BASE_URL_PORT']} --worker-class gevent", shell=True)
+    LOGGER.info(f"Starting Web Server On PORT: {config_dict['BASE_URL_PORT']}")
+    Popen(f"gunicorn webserver.wserver:app --bind 0.0.0.0:{config_dict['BASE_URL_PORT']} --worker-class gevent", shell=True)
 
 
 Interval = []
