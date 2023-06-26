@@ -126,6 +126,7 @@ class Config:
         
         
         DEFAULT_UPLOAD = environ.get("DEFAULT_UPLOAD", 'rc')
+        RCLONE_CONFIG_URL = environ.get("RCLONE_CONFIG_URL", '')
         RCLONE_PATH = environ.get("RCLONE_PATH", '')
         RCLONE_FLAGS = environ.get("RCLONE_FLAGS", '')
         USE_SERVICE_ACCOUNTS = environ.get("USE_SERVICE_ACCOUNTS", '').lower() == 'true'

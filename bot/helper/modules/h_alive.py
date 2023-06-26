@@ -4,6 +4,7 @@ from threading import Timer
 from bot import BASE_URL, LOGGER
 
 def keep_alive():
+    LOGGER.info('Connecting With BASE URL')
     LOGGER.info(f"🔶Heroku Keep Alive: [{BASE_URL}] - {get(BASE_URL).status_code}")
 
 
