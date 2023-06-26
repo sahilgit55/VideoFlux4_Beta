@@ -36,7 +36,7 @@ if len(config_dict['USER_SESSION_STRING']):
     LOGGER.info("Creating client from USER_SESSION_STRING")
     user = tgClient('user', config_dict['TELEGRAM_API'], config_dict['TELEGRAM_HASH'], session_string=config_dict['USER_SESSION_STRING'],
                     parse_mode=enums.ParseMode.HTML,
-                    # max_concurrent_transmissions=1000
+                    max_concurrent_transmissions=1000
                     ).start()
     IS_PREMIUM_USER = user.me.is_premium
 else:
@@ -48,7 +48,7 @@ bot = tgClient('bot', config_dict['TELEGRAM_API'], config_dict['TELEGRAM_HASH'],
                             bot_token=config_dict['BOT_TOKEN'],
                             workers=1000,
                             parse_mode=enums.ParseMode.HTML,
-                            # max_concurrent_transmissions=1000
+                            max_concurrent_transmissions=1000
                             ).start()
 
 bot_loop = bot.loop
