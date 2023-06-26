@@ -9,7 +9,7 @@ from bot.helper.utils.other_utils import sync_to_async
 from bot.helper.modules import basic_cmds, auth
 
 from bot.helper.aria.aria2_listener import start_aria2_listener
-from bot.helper.modules import mirror_leech, cancel_task, status, user_settings, bot_settings, yt_dl, t_select
+from bot.helper.modules import mirror_leech, cancel_task, status, user_settings, bot_settings, yt_dl, t_select, h_alive
 
 
 async def restart_notification():
