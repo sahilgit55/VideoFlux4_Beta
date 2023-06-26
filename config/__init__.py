@@ -1,5 +1,5 @@
 from config.logger import LOGGER, log_file
-from config.commands import BotCommands, getCommandString
+from config.commands import BotCommands, getCommandString, set_commands
 from os import environ, getcwd
 from os.path import exists
 from dotenv import load_dotenv, dotenv_values
@@ -162,6 +162,7 @@ class Config:
         UPTOBOX_TOKEN = environ.get("UPTOBOX_TOKEN", '')
         EXTENSION_FILTER = environ.get('EXTENSION_FILTER', '')
         YT_DLP_OPTIONS = environ.get('YT_DLP_OPTIONS', '')
+        SET_COMMANDS = environ.get('SET_COMMANDS', True)
 
 
 
@@ -210,3 +211,9 @@ else:
 config_dict['HEROKU_APP_NAME'] = environ.get("HEROKU_APP_NAME", False)
 config_dict['HEROKU_API_KEY'] = environ.get("HEROKU_API_KEY", False)
 BASE_URL = config_dict['BASE_URL']
+SET_COMMANDS = config_dict['SET_COMMANDS']
+
+if SET_COMMANDS:
+        LOGGER.info("Bot Commands Will Be Setup")
+else:
+        LOGGER.info("Bot Commands Will Not Be Setup")

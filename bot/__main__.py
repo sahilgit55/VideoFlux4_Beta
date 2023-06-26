@@ -3,7 +3,7 @@ from signal import signal, SIGINT
 from aiofiles.os import path as aiopath, remove as aioremove
 from asyncio import gather
 
-from bot import bot, LOGGER, bot_name
+from bot import bot, LOGGER, bot_name, set_commands, BotCommands, SET_COMMANDS
 from bot.helper.utils.file_utils import start_cleanup, exit_clean_up
 from bot.helper.utils.other_utils import sync_to_async
 from bot.helper.modules import basic_cmds, auth
@@ -24,7 +24,7 @@ async def restart_notification():
 
 
 async def main():
-    await gather(start_cleanup(), restart_notification())
+    await gather(start_cleanup(), restart_notification(), set_commands(bot, SET_COMMANDS, BotCommands))
     await sync_to_async(start_aria2_listener, wait=False)
     LOGGER.info(f'✅@{bot_name} Started Successfully!✅')
     LOGGER.info(f"⚡Bot By Sahil Nolia⚡")

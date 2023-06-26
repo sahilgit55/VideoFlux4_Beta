@@ -9,7 +9,7 @@ faulthandler_enable()
 install()
 setdefaulttimeout(600)
 
-from config import config_dict, user_data, LOGGER, log_file, DOWNLOAD_DIR, OWNER_ID, BotCommands, commands_string, DATABASE_URL, DB_NAME, bot_id, botStartTime, GLOBAL_EXTENSION_FILTER,BASE_URL, getMaxLeechSize
+from config import config_dict, user_data, LOGGER, log_file, DOWNLOAD_DIR, OWNER_ID, BotCommands, commands_string, DATABASE_URL, DB_NAME, bot_id, botStartTime, GLOBAL_EXTENSION_FILTER,BASE_URL, getMaxLeechSize, set_commands, SET_COMMANDS
 from config.aria_config import aria2, aria2_options, aria2c_global
 
 
