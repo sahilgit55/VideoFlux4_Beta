@@ -1,4 +1,5 @@
 from pyrogram.types import BotCommand
+from config.logger import LOGGER
 
 class BotCommands:
     def __init__(self, CMD_SUFFIX):
@@ -51,30 +52,33 @@ NOTE: Try each command without any argument to see more detalis.
 
 async def set_commands(client, SET_COMMANDS, BotCommands):
     if SET_COMMANDS:
-        await client.set_bot_commands([
-            BotCommand(
-                f'{BotCommands.MirrorCommand}', f'or /{BotCommands.MirrorCommand[1]} Mirror'),
-            BotCommand(
-                f'{BotCommands.LeechCommand}', f'or /{BotCommands.LeechCommand[1]} Leech'),
-            BotCommand(
-                f'{BotCommands.YtdlCommand}', f'or /{BotCommands.YtdlCommand[1]} Mirror yt-dlp supported link'),
-            BotCommand(
-                f'{BotCommands.YtdlLeechCommand}', f'or /{BotCommands.YtdlLeechCommand[1]} Leech through yt-dlp supported link'),
-            BotCommand(
-                f'{BotCommands.StatusCommand}', f'or /{BotCommands.StatusCommand[1]} Get mirror status message'),
-            BotCommand(f'{BotCommands.StatsCommand}', 'Check bot stats'),
-            BotCommand(f'{BotCommands.BtSelectCommand}',
-                       'Select files to download only torrents'),
-            BotCommand(f'{BotCommands.CancelMirror}', 'Cancel a Task'),
-            BotCommand(
-                f'{BotCommands.CancelAllCommand}', f'Cancel all tasks which added by you or {BotCommands.CancelAllCommand[1]} to in bots.'),
-            BotCommand(f'{BotCommands.UserSetCommand}', 'Users settings'),
-            BotCommand(f'{BotCommands.BotSetCommand}', 'Bot settings'),
-            BotCommand(f'{BotCommands.LogCommand}', 'Bot Logs'),
-            BotCommand(f'{BotCommands.RestartCommand}', 'Restart Bot'),
-            BotCommand(f'{BotCommands.AddSudoCommand}', 'Add Sudo User'),
-            BotCommand(f'{BotCommands.RmSudoCommand}', 'Remove Sudo User'),
-            BotCommand(f'{BotCommands.AuthorizeCommand}', 'Authorize Chat or User'),
-            BotCommand(f'{BotCommands.UnAuthorizeCommand}', 'Unauthorize Chat or User'),
-            BotCommand(f'{BotCommands.HelpCommand}', 'Get detailed help'),
-        ])
+        try:
+            await client.set_bot_commands([
+                BotCommand(
+                    f'{BotCommands.MirrorCommand}', f'or /{BotCommands.MirrorCommand[1]} Mirror'),
+                BotCommand(
+                    f'{BotCommands.LeechCommand}', f'or /{BotCommands.LeechCommand[1]} Leech'),
+                BotCommand(
+                    f'{BotCommands.YtdlCommand}', f'or /{BotCommands.YtdlCommand[1]} Mirror yt-dlp supported link'),
+                BotCommand(
+                    f'{BotCommands.YtdlLeechCommand}', f'or /{BotCommands.YtdlLeechCommand[1]} Leech through yt-dlp supported link'),
+                BotCommand(
+                    f'{BotCommands.StatusCommand}', f'or /{BotCommands.StatusCommand[1]} Get mirror status message'),
+                BotCommand(f'{BotCommands.StatsCommand}', 'Check bot stats'),
+                BotCommand(f'{BotCommands.BtSelectCommand}',
+                        'Select files to download only torrents'),
+                BotCommand(f'{BotCommands.CancelMirror}', 'Cancel a Task'),
+                BotCommand(
+                    f'{BotCommands.CancelAllCommand}', f'Cancel all tasks which added by you or {BotCommands.CancelAllCommand[1]} to in bots.'),
+                BotCommand(f'{BotCommands.UserSetCommand}', 'Users settings'),
+                BotCommand(f'{BotCommands.BotSetCommand}', 'Bot settings'),
+                BotCommand(f'{BotCommands.LogCommand}', 'Bot Logs'),
+                BotCommand(f'{BotCommands.RestartCommand}', 'Restart Bot'),
+                BotCommand(f'{BotCommands.AddSudoCommand}', 'Add Sudo User'),
+                BotCommand(f'{BotCommands.RmSudoCommand}', 'Remove Sudo User'),
+                BotCommand(f'{BotCommands.AuthorizeCommand}', 'Authorize Chat or User'),
+                BotCommand(f'{BotCommands.UnAuthorizeCommand}', 'Unauthorize Chat or User'),
+                BotCommand(f'{BotCommands.HelpCommand}', 'Get detailed help'),
+            ])
+        except Exception as e:
+            LOGGER.info(f"Failed To Set Bot Commands: {str(e)}")
