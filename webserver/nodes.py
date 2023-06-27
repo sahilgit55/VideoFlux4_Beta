@@ -19,8 +19,8 @@ class TorNode(NodeMixin):
 
         if parent is not None:
             self.parent = parent
-        if size is not None:
-            self.size = size
+        # if size is not None:
+        #     self.size = size
         if priority is not None:
             self.priority = priority
         if file_id is not None:
