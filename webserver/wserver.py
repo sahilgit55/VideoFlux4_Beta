@@ -849,11 +849,11 @@ def status():
 def homepage():
     return rawindexpage.replace("/* style1 */", stlye1).replace("<!-- Print -->", rawowners)
 
-@app.errorhandler(Exception)
-def page_not_found(e):
-    LOGGER.info("Error")
-    return rawindexpage.replace("/* style1 */", stlye1) \
-                    .replace("<!-- Print -->", f"<h1 style='text-align: center;color: red;'>404: Torrent not found! Mostly wrong input. <br><br>Error: {e}</h1>"), 404
+# @app.errorhandler(Exception)
+# def page_not_found(e):
+#     LOGGER.info("Error")
+#     return rawindexpage.replace("/* style1 */", stlye1) \
+#                     .replace("<!-- Print -->", f"<h1 style='text-align: center;color: red;'>404: Torrent not found! Mostly wrong input. <br><br>Error: {e}</h1>"), 404
 
 if __name__ == "__main__":
     app.run()
