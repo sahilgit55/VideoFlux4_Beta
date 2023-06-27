@@ -15,7 +15,7 @@ from webserver.nodes import make_tree
 app = Flask(__name__)
 
 basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    handlers=[FileHandler('log.txt'), StreamHandler()],
+                    handlers=[FileHandler('BotLog.txt'), StreamHandler()],
                     level=INFO)
 
 aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
