@@ -1,13 +1,12 @@
-from os import environ, getcwd
-from re import findall
-
 from anytree import NodeMixin
+from re import findall as re_findall
+from os import environ, getcwd
 
 DOWNLOAD_DIR = environ.get('DOWNLOAD_DIR', '')
 if len(DOWNLOAD_DIR) == 0:
     DOWNLOAD_DIR = f"{getcwd()}/downloads/"
 elif not DOWNLOAD_DIR.endswith("/"):
-    DOWNLOAD_DIR = f'{DOWNLOAD_DIR}/'
+    DOWNLOAD_DIR += '/'
 
 
 class TorNode(NodeMixin):
@@ -19,8 +18,11 @@ class TorNode(NodeMixin):
 
         if parent is not None:
             self.parent = parent
-        # if size is not None:
-        #     self.size = size
+        if size is not None:
+            try:
+                self.size = size
+            except:
+                pass
         if priority is not None:
             self.priority = priority
         if file_id is not None:
@@ -33,7 +35,7 @@ def qb_get_folders(path):
     return path.split("/")
 
 def get_folders(path):
-    fs = findall(f'{DOWNLOAD_DIR}[0-9]+/(.+)', path)[0]
+    fs = re_findall(f'{DOWNLOAD_DIR}[0-9]+/(.+)', path)[0]
     return fs.split('/')
 
 def make_tree(res, aria2=False):
