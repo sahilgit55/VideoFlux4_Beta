@@ -1,7 +1,18 @@
+from subprocess import run as srun
+from os.path import exists
 from threading import Thread
 from time import sleep
 from aria2p import API as ariaAPI, Client as ariaClient
 from config import LOGGER, DOWNLOAD_DIR, aria2_options
+
+
+if not exists('.netrc'):
+    with open('.netrc', 'w'):
+        pass
+srun(["chmod", "600", ".netrc"])
+srun(["cp", ".netrc", "/root/.netrc"])
+srun(["chmod", "+x", "aria.sh"])
+srun("./aria.sh", shell=True)
 
 
 aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
