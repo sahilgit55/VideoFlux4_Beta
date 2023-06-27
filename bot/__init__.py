@@ -1,6 +1,5 @@
 from pyrogram import Client as tgClient, enums
 from asyncio import Lock
-from subprocess import Popen
 from faulthandler import enable as faulthandler_enable
 from socket import setdefaulttimeout
 from uvloop import install
@@ -11,12 +10,6 @@ setdefaulttimeout(600)
 
 from config import config_dict, user_data, LOGGER, log_file, DOWNLOAD_DIR, OWNER_ID, BotCommands, commands_string, DATABASE_URL, DB_NAME, bot_id, botStartTime, GLOBAL_EXTENSION_FILTER,BASE_URL, getMaxLeechSize, set_commands, SET_COMMANDS
 from config.aria_config import aria2, aria2_options, aria2c_global
-
-
-if config_dict['BASE_URL_PORT']:
-    LOGGER.info(f"Starting Web Server On PORT: {config_dict['BASE_URL_PORT']}")
-    Popen(f"gunicorn webserver.wserver:app --bind 0.0.0.0:{config_dict['BASE_URL_PORT']} --worker-class gevent", shell=True)
-
 
 Interval = []
 
