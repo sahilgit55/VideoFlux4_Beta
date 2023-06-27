@@ -756,8 +756,11 @@ def list_torrent_contents(id_):
     else:
         LOGGER.info("EnteredG2")
         aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
+        LOGGER.info("aria2 started")
         res = aria2.client.get_files(id_)
+        LOGGER.info(str(res))
         cont = make_tree(res, True)
+        LOGGER.info(str(cont))
     return rawindexpage.replace("/* style2 */", stlye2).replace("<!-- files_list -->", files_list) \
         .replace("{form_url}", f"/app/files/{id_}?pin_code={pincode}") \
         .replace("<!-- {My_content} -->", cont[0])
