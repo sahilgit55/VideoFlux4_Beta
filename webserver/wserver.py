@@ -730,8 +730,9 @@ input[type="submit"]:hover, input[type="submit"]:focus {
 
 @app.route('/app/files/<string:id_>', methods=['GET'])
 def list_torrent_contents(id_):
-
+    LOGGER.info("EnteredG")
     if "pin_code" not in request.args.keys():
+        LOGGER.info("EnteredGPIN")
         return rawindexpage.replace("/* style1 */", stlye1).replace("<!-- pin_entry -->", pin_entry) \
             .replace("{form_url}", f"/app/files/{id_}")
 
@@ -746,12 +747,14 @@ def list_torrent_contents(id_):
             "<!-- Print -->", "<h1 style='text-align: center;color: red;'>Incorrect pin code</h1>")
 
     if len(id_) > 20:
+        LOGGER.info("EnteredG1")
         pass
         # client = qbClient(host="localhost", port="8090")
         # res = client.torrents_files(torrent_hash=id_)
         # cont = make_tree(res)
         # client.auth_log_out()
     else:
+        LOGGER.info("EnteredG2")
         aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
         res = aria2.client.get_files(id_)
         cont = make_tree(res, True)
