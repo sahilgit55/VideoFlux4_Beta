@@ -56,7 +56,7 @@ async def start(_, message):
 
 
 async def restart(_, message):
-    if config_dict['HEROKU_APP_NAME'] and config_dict['HEROKU_API_KEY']:
+    if len(config_dict['HEROKU_APP_NAME']) and len(config_dict['HEROKU_API_KEY']):
             restart_message = await sendMessage(message, "Restarting Heroku Dyno")
             async with aiopen(".restartmsg", "w") as f:
                     await f.write(f"{restart_message.chat.id}\n{restart_message.id}\n")
