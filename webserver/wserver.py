@@ -1,4 +1,4 @@
-from logging import INFO, FileHandler, StreamHandler, basicConfig, getLogger
+from config.logger import LOGGER
 from os import path
 from subprocess import check_output
 from time import time
@@ -14,13 +14,9 @@ from webserver.nodes import make_tree
 
 app = Flask(__name__)
 
-basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    handlers=[FileHandler('BotLog.txt'), StreamHandler()],
-                    level=INFO)
 
 aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
 
-LOGGER = getLogger(__name__)
 
 rawowners = "<h1 style='text-align: center'>See my Channel <a href='https://t.me/JMDKH_Team'>@Telegram</a><br><br>By<br><br><a href='https://github.com/junedkh'>Juned KH</a></h1>"
 
@@ -765,9 +761,12 @@ def list_torrent_contents(id_):
 
 @app.route('/app/files/<string:id_>', methods=['POST'])
 def set_priority(id_):
+    LOGGER.info("Entered")
     data = dict(request.form)
+    LOGGER.info(data)
     resume = ""
     if len(id_) > 20:
+        LOGGER.info('greater than20')
         pause = ""
 
         # for i, value in data.items():
@@ -801,6 +800,7 @@ def set_priority(id_):
         #     LOGGER.error(f"Verification Failed! Hash: {id_}")
         # client.auth_log_out()
     else:
+        LOGGER.info('aria2')
         for i, value in data.items():
             if "filenode" in i and value == "on":
                 node_no = i.split("_")[-1]
