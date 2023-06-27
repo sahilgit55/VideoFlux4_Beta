@@ -6,11 +6,33 @@ from dotenv import load_dotenv, dotenv_values
 from requests import get
 from pymongo import MongoClient
 from time import time
+from subprocess import run as srun, Popen
+
+
+def ariaSetup():
+        LOGGER.info("Setting Up Aria2")
+        if not exists('.netrc'):
+                with open('.netrc', 'w'):
+                        pass
+        srun(["chmod", "600", ".netrc"])
+        srun(["cp", ".netrc", "/root/.netrc"])
+        srun(["chmod", "+x", "aria.sh"])
+        srun("./aria.sh", shell=True)
+        if not DOWNLOAD_DIR.startswith('/content/'):
+                LOGGER.info(f"Starting Web Server On Port {BASE_URL_PORT}")
+                Popen(f"gunicorn webserver.wserver:app --bind 0.0.0.0:{BASE_URL_PORT} --worker-class gevent", shell=True)
+
+
+DOWNLOAD_DIR = f"{getcwd()}/downloads/"
+BASE_URL_PORT = environ.get("PORT", '80')
+
+ariaSetup()
 
 botStartTime = time()
 config_dict = {}
 user_data = {}
 aria2_options = {}
+
 GLOBAL_EXTENSION_FILTER = ['aria2']
 
 
@@ -178,7 +200,7 @@ for id_ in config_dict['SUDO_USERS'].split():
         user_data[int(id_.strip())] = {'is_sudo': True}
 
 
-DOWNLOAD_DIR = f"{getcwd()}/downloads/"
+
 config_dict['DOWNLOAD_DIR'] = DOWNLOAD_DIR
 OWNER_ID = config_dict['OWNER_ID']
 DATABASE_URL = config_dict['DATABASE_URL']
@@ -203,11 +225,6 @@ def getMaxLeechSize(IS_PREMIUM_USER):
         else:
                 config_dict['LEECH_SPLIT_SIZE'] = int(LEECH_SPLIT_SIZE)
         return MAX_SPLIT_SIZE
-
-if DOWNLOAD_DIR.startswith('/content/'):
-        BASE_URL_PORT = False
-else:
-        BASE_URL_PORT = environ.get("PORT", '80')
 
 config_dict['BASE_URL_PORT'] = BASE_URL_PORT
 config_dict['HEROKU_APP_NAME'] = environ.get("HEROKU_APP_NAME", '')

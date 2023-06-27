@@ -1,18 +1,7 @@
-from subprocess import run as srun, Popen
-from os.path import exists
 from threading import Thread
 from time import sleep
 from aria2p import API as ariaAPI, Client as ariaClient
-from config import LOGGER, DOWNLOAD_DIR, aria2_options, BASE_URL_PORT
-
-
-if not exists('.netrc'):
-    with open('.netrc', 'w'):
-        pass
-srun(["chmod", "600", ".netrc"])
-srun(["cp", ".netrc", "/root/.netrc"])
-srun(["chmod", "+x", "aria.sh"])
-srun("./aria.sh", shell=True)
+from config import LOGGER, DOWNLOAD_DIR, aria2_options
 
 
 aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
@@ -44,8 +33,3 @@ else:
     a2c_glo = {op: aria2_options[op]
                for op in aria2c_global if op in aria2_options}
     aria2.set_global_options(a2c_glo)
-
-
-if BASE_URL_PORT:
-    LOGGER.info(f"Starting Web Server On PORT: {BASE_URL_PORT}")
-    Popen(f"gunicorn webserver.wserver:app --bind 0.0.0.0:{BASE_URL_PORT} --worker-class gevent", shell=True)
