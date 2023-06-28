@@ -8,6 +8,7 @@ class BotCommands:
         self.YtdlCommand = [f'ytdl{CMD_SUFFIX}', f'y{CMD_SUFFIX}']
         self.LeechCommand = [f'leech{CMD_SUFFIX}', f'l{CMD_SUFFIX}']
         self.YtdlLeechCommand = [f'ytdlleech{CMD_SUFFIX}', f'yl{CMD_SUFFIX}']
+        self.CloneCommand = f'clone{CMD_SUFFIX}'
         self.CancelMirror = f'cancel{CMD_SUFFIX}'
         self.CancelAllCommand = f'cancelall{CMD_SUFFIX}'
         self.StatusCommand = f'status{CMD_SUFFIX}'
