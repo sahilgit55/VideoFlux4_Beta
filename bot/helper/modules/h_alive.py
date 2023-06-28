@@ -9,6 +9,6 @@ def keep_alive():
 
 
 if len(BASE_URL) and "herokuapp.com" in BASE_URL:
-    Timer(600, keep_alive()).start()
+    Timer(600, keep_alive).start()
 else:
     LOGGER.info(f'{BASE_URL} is not a heroku app url')
