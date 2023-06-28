@@ -1,5 +1,3 @@
-from configparser import ConfigParser
-from aiofiles import open as aiopen
 from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
 from re import search as re_search
