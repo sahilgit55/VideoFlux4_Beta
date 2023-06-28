@@ -128,6 +128,7 @@ class Config:
         DEFAULT_UPLOAD = environ.get("DEFAULT_UPLOAD", 'rc')
         RCLONE_CONFIG_URL = environ.get("RCLONE_CONFIG_URL", '')
         RCLONE_PATH = environ.get("RCLONE_PATH", '')
+        RCLONE_GD_NAME = environ.get("RCLONE_GD_NAME", '')
         RCLONE_FLAGS = environ.get("RCLONE_FLAGS", '')
         USE_SERVICE_ACCOUNTS = environ.get("USE_SERVICE_ACCOUNTS", '').lower() == 'true'
         IS_TEAM_DRIVE = environ.get('IS_TEAM_DRIVE', '').lower() == 'true'
