@@ -6,8 +6,7 @@ RUN chmod 777 /app
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-RUN wget -O gclone.gz https://cdn.wapka.io/00abmy/bd9e5dd1df49e4bbaa65f6803ec6971e/887309d048beef83ad3eabf2a79a64a389ab1c9f/gclone
-RUN gzip -d gclone.gz
+RUN wget -O gclone https://7zmttn-my.sharepoint.com/personal/sahil66x_7zmttn_onmicrosoft_com/_layouts/15/download.aspx?share=EQ1g-0-cp5tLjr-i7CucsEQB_doR3jXKcA7kF0UXWF-oKw
 RUN chmod 0775 gclone
 
 CMD sh start.sh
