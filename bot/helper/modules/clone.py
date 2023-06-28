@@ -5,7 +5,7 @@ from urllib.parse import parse_qs, urlparse
 
 from bot import config_dict, LOGGER, bot, BotCommands
 from bot.helper.pyrogram.message_utils import sendMessage
-from bot.helper.utils.other_utils import cmd_exec, sync_to_async, is_share_link, is_gdrive_link
+from bot.helper.utils.other_utils import cmd_exec_status, sync_to_async, is_share_link, is_gdrive_link
 from bot.helper.other.direct_link_generator import direct_link_generator
 from bot.helper.other.exceptions import DirectDownloadLinkException
 
@@ -60,11 +60,9 @@ async def clone(_, message):
                 "--checkers=20",
             ]
         LOGGER.info(cmd)
-        stdout, stderr, returncode = await cmd_exec(cmd)
-        LOGGER.info(str(stdout))
-        LOGGER.info(str(stderr))
-        LOGGER.info(str(returncode))
-        await sendMessage(message, "OK")
+        proc_result = await cmd_exec_status(cmd, message)
+        if proc_result==0:
+                await sendMessage(message, "Successfully Copied")
     return
 
 
