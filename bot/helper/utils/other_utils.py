@@ -12,7 +12,6 @@ from aiohttp import ClientSession
 from bot import download_dict, download_dict_lock, botStartTime, user_data, config_dict, bot_loop, BotCommands
 from bot.helper.pyrogram.button_build import ButtonMaker
 from bot.helper.other.telegraph import telegraph
-from bot.helper.pyrogram.message_utils import editMessage
 
 THREADPOOL = ThreadPoolExecutor(max_workers=1000)
 
@@ -314,28 +313,6 @@ async def cmd_exec(cmd, shell=False):
     stdout = stdout.decode().strip()
     stderr = stderr.decode().strip()
     return stdout, stderr, proc.returncode
-
-async def cmd_exec_status(cmd, message, shell=False):
-    if shell:
-        proc = await create_subprocess_shell(cmd, stdout=PIPE, stderr=PIPE)
-    else:
-        proc = await create_subprocess_exec(*cmd, stdout=PIPE, stderr=PIPE)
-    stderr = ''
-    while True:
-                try:
-                    async for line in proc.stderr:
-                            line = line.decode('utf-8').strip()
-                            print(line)
-                            stderr += line
-                            await editMessage(message, str(line))
-                except ValueError:
-                        continue
-                else:
-                        break
-    await proc.wait()
-    if proc.returncode!=0:
-            await editMessage(message, f"Task Failed!\n\n{stderr}")
-    return proc.returncode
 
 
 def new_task(func):

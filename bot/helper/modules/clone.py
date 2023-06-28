@@ -2,10 +2,12 @@ from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
 from re import search as re_search
 from urllib.parse import parse_qs, urlparse
+from asyncio import create_subprocess_exec, create_subprocess_shell, sleep
+from asyncio.subprocess import PIPE
 
 from bot import config_dict, LOGGER, bot, BotCommands
-from bot.helper.pyrogram.message_utils import sendMessage
-from bot.helper.utils.other_utils import cmd_exec_status, sync_to_async, is_share_link, is_gdrive_link
+from bot.helper.pyrogram.message_utils import sendMessage, editMessage
+from bot.helper.utils.other_utils import sync_to_async, is_share_link, is_gdrive_link
 from bot.helper.other.direct_link_generator import direct_link_generator
 from bot.helper.other.exceptions import DirectDownloadLinkException
 
@@ -19,6 +21,30 @@ def getIdFromUrl(link):
             return res.group(3)
         parsed = urlparse(link)
         return parse_qs(parsed.query)['id'][0]
+
+
+async def cmd_exec_status(cmd, message, shell=False):
+    if shell:
+        proc = await create_subprocess_shell(cmd, stdout=PIPE, stderr=PIPE)
+    else:
+        proc = await create_subprocess_exec(*cmd, stdout=PIPE, stderr=PIPE)
+    stderr = ''
+    while True:
+                try:
+                    async for line in proc.stderr:
+                            line = line.decode('utf-8').strip()
+                            print(line)
+                            stderr += line
+                            await editMessage(message, str(line))
+                            await sleep(7)
+                except ValueError:
+                        continue
+                else:
+                        break
+    await proc.wait()
+    if proc.returncode!=0:
+            await editMessage(message, f"Task Failed!\n\n{stderr}")
+    return proc.returncode
 
 async def clone(_, message):
     input_list = message.text.split(' ')
@@ -60,9 +86,10 @@ async def clone(_, message):
                 "--checkers=20",
             ]
         LOGGER.info(cmd)
-        proc_result = await cmd_exec_status(cmd, message)
+        msg = await sendMessage(message, "Cloning, Please Wait...")
+        proc_result = await cmd_exec_status(cmd, msg)
         if proc_result==0:
-                await sendMessage(message, "Successfully Copied")
+                await editMessage(msg, "Successfully Copied")
     return
 
 
