@@ -175,6 +175,11 @@ async def clone(_, message):
         await update_status(cloneob, msg)
         if cloneob.pro_id in processes:
             processes.remove(pro_id)
+        else:
+            try:
+                proc.kill()
+            except:
+                pass
     return
 
 
