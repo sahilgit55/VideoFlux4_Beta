@@ -287,7 +287,7 @@ class RcloneTransferHelper:
                             f'while getting link. Path: {destination} | Stderr: {err}')
                         link = ''
             else:
-                    link = ''
+                    link = False
         if self.__is_cancelled:
             return
         LOGGER.info(f'Upload Done. Path: {destination}')

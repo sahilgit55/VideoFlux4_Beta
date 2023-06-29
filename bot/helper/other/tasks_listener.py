@@ -355,7 +355,7 @@ class MirrorLeechListener:
                 msg += f'\n<b>SubFolders: </b>{folders}'
                 msg += f'\n<b>Files: </b>{files}'
             # if link or rclonePath and config_dict['RCLONE_SERVE_URL']:
-            if link or rclonePath:
+            if config_dict['CLOUD_LINK'] and (link or rclonePath):
                 buttons = ButtonMaker()
                 if link:
                     buttons.ubutton("☁️ Cloud Link", link)
