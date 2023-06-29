@@ -7,11 +7,12 @@ from asyncio.subprocess import PIPE
 from string import ascii_lowercase, digits
 from random import choices
 
-from bot import config_dict, LOGGER, bot, BotCommands, bot_loop
+from bot import config_dict, LOGGER, bot, BotCommands, bot_loop, OWNER_ID
 from bot.helper.pyrogram.message_utils import sendMessage, editMessage
 from bot.helper.utils.other_utils import sync_to_async, is_share_link, is_gdrive_link, get_progress_bar_from_percentage, new_task
 from bot.helper.other.direct_link_generator import direct_link_generator
 from bot.helper.other.exceptions import DirectDownloadLinkException
+from bot.helper.pyrogram.filters import CustomFilters
 
 processes = set()
 
@@ -127,8 +128,11 @@ async def clone(_, message):
         name = ""
     if link=="cancel":
         if name in processes:
-            processes.remove(name)
-            await sendMessage(message, 'Process Cancelled')
+            if name.split("_")[-1] == str(message.from_user.id) or message.from_user.id==OWNER_ID:
+                    processes.remove(name)
+                    await sendMessage(message, 'Process Cancelled')
+            else:
+                    await sendMessage(message, 'This is not your task')
             return
         else:
             await sendMessage(message, 'Process ID Not Found')
@@ -162,7 +166,7 @@ async def clone(_, message):
                 "--checkers=20",
             ]
         LOGGER.info(cmd)
-        pro_id = str(''.join(choices(ascii_lowercase + digits, k=7)))
+        pro_id = str(''.join(choices(ascii_lowercase + digits, k=7))) + "_" + str(message.from_user.id)
         processes.add(pro_id)
         proc = await create_subprocess_exec(*cmd, stdout=PIPE, stderr=PIPE)
         cloneob = CloneHelper(proc, pro_id)
@@ -176,5 +180,5 @@ async def clone(_, message):
 
 
 
-bot.add_handler(MessageHandler(
-    clone, filters=command(BotCommands.CloneCommand)))
+bot.add_handler(MessageHandler(clone, filters=command(
+    BotCommands.CloneCommand) & CustomFilters.authorized))
