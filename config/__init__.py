@@ -165,6 +165,7 @@ class Config:
         EXTENSION_FILTER = environ.get('EXTENSION_FILTER', '')
         YT_DLP_OPTIONS = environ.get('YT_DLP_OPTIONS', '')
         SET_COMMANDS = environ.get('SET_COMMANDS', True)
+        CLOUD_LINK =  environ.get('CLOUD_LINK', 'true').lower() == 'true'
 
 
 

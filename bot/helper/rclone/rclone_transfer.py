@@ -276,16 +276,18 @@ class RcloneTransferHelper:
                 destination = f"{oremote}:{rc_path}/{self.name}"
             else:
                 destination = f"{oremote}:{self.name}"
+            if config_dict['CLOUD_LINK']:
+                    cmd = ['rclone', 'link', '--config', oconfig_path, destination]
+                    res, err, code = await cmd_exec(cmd)
 
-            cmd = ['rclone', 'link', '--config', oconfig_path, destination]
-            res, err, code = await cmd_exec(cmd)
-
-            if code == 0:
-                link = res
-            elif code != -9:
-                LOGGER.error(
-                    f'while getting link. Path: {destination} | Stderr: {err}')
-                link = ''
+                    if code == 0:
+                        link = res
+                    elif code != -9:
+                        LOGGER.error(
+                            f'while getting link. Path: {destination} | Stderr: {err}')
+                        link = ''
+            else:
+                    link = ''
         if self.__is_cancelled:
             return
         LOGGER.info(f'Upload Done. Path: {destination}')
