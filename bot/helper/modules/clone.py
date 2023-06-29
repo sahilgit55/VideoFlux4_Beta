@@ -66,6 +66,7 @@ async def pro_status(proc, cloneob):
         try:
             async for line in proc.stderr:
                     if cloneob.pro_id not in processes:
+                        proc.kill()
                         break
                     line = line.decode('utf-8').strip()
                     if len(str(line)):
