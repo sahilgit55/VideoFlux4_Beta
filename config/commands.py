@@ -34,6 +34,7 @@ NOTE: Try each command without any argument to see more detalis.
 /{BotCommands.YtdlCommand[0]} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
 /{BotCommands.LeechCommand[0]} or /{BotCommands.LeechCommand[1]}: Start leeching to Telegram.
 /{BotCommands.YtdlLeechCommand[0]} or /{BotCommands.YtdlLeechCommand[1]}: Leech yt-dlp supported link.
+/{BotCommands.CloneCommand}: Clone Gdrive Files Or Folders.
 /{BotCommands.UserSetCommand} [query]: Users settings.
 /{BotCommands.BotSetCommand} [query]: Bot settings.
 /{BotCommands.BtSelectCommand}: Select files from torrents by gid or reply.
@@ -63,6 +64,8 @@ async def set_commands(client, SET_COMMANDS, BotCommands):
                     f'{BotCommands.YtdlCommand[0]}', f'or /{BotCommands.YtdlCommand[1]} Mirror yt-dlp supported link'),
                 BotCommand(
                     f'{BotCommands.YtdlLeechCommand[0]}', f'or /{BotCommands.YtdlLeechCommand[1]} Leech through yt-dlp supported link'),
+                BotCommand(
+                    f'{BotCommands.CloneCommand}', f'Clone Gdrive Files Or Folders'),
                 BotCommand(
                     f'{BotCommands.StatusCommand}', f'Get mirror status message'),
                 BotCommand(f'{BotCommands.StatsCommand}', 'Check bot stats'),
