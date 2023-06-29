@@ -126,6 +126,19 @@ def get_progress_bar_string(pct):
     p_str += '□' * (12 - cFull)
     return f"[{p_str}]"
 
+def get_progress_bar_from_percentage(percentage):
+    try:
+        p = percentage.strip().strip("%")
+        p = int(float(p))
+    except:
+        p = 0
+    p = min(max(p, 0), 100)
+    cFull = p // 6
+    p_str = '■' * cFull
+    p_str += '□' * (16 - cFull)
+    p_str = f"[{p_str}]"
+    return p_str
+
 
 def get_readable_message():
     msg = ""
