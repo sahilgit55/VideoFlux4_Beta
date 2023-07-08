@@ -360,8 +360,7 @@ class RcloneTransferHelper:
         ext = '*.{' + ','.join(GLOBAL_EXTENSION_FILTER) + '}'
         if not _remote and not _name:
             cmd = ['rclone', method, '--fast-list', '--config', config_path, '-P', source, destination,
-               '--exclude', ext, '--ignore-case', '--low-level-retries', '1', '-M', '--log-file',
-               'rlog.txt', '--log-level', 'DEBUG']
+               '--exclude', ext, '--ignore-case', '--low-level-retries', '1', '-M']
         else:
             cmd = ['rclone', method, '--fast-list', '--config', config_path, '-P',
                    f'{_remote}',
