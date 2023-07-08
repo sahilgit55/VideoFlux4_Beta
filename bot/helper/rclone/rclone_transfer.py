@@ -358,9 +358,10 @@ class RcloneTransferHelper:
     @staticmethod
     def __getUpdatedCommand(config_path, source, destination, rcflags, method, _remote=None, _name=None):
         ext = '*.{' + ','.join(GLOBAL_EXTENSION_FILTER) + '}'
-        if not _remote and _name:
+        if not _remote and not _name:
             cmd = ['rclone', method, '--fast-list', '--config', config_path, '-P', source, destination,
-                '--exclude', ext, '--ignore-case', '--low-level-retries', '1', '-M']
+               '--exclude', ext, '--ignore-case', '--low-level-retries', '1', '-M', '--log-file',
+               'rlog.txt', '--log-level', 'DEBUG']
         else:
             cmd = ['rclone', method, '--fast-list', '--config', config_path, '-P',
                    f'{_remote}',
