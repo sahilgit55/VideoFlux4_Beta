@@ -107,7 +107,7 @@ class RcloneTransferHelper:
 
         if return_code == 0:
             await self.__listener.onDownloadComplete()
-        if return_code == 1:
+        elif return_code == 1:
             error = (await self.__proc.stderr.read()).decode().strip()
             LOGGER.error(f"Some Error Occured But Trying To Upload: {error}")
             await self.__listener.onDownloadComplete()

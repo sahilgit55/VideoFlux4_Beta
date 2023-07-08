@@ -7,7 +7,7 @@ from asyncio import sleep
 from aiofiles.os import path as aiopath
 
 from bot import bot, DOWNLOAD_DIR, LOGGER, config_dict, BotCommands
-from bot.helper.utils.other_utils import is_url, is_magnet, is_mega_link, is_gdrive_link, get_content_type, new_task, sync_to_async, is_rclone_path, is_telegram_link, arg_parser, checkToken
+from bot.helper.utils.other_utils import is_url, is_magnet, is_mega_link, is_gdrive_link, get_content_type, new_task, sync_to_async, is_rclone_path, is_telegram_link, arg_parser
 from bot.helper.other.exceptions import DirectDownloadLinkException
 from bot.helper.aria.aria_engine import add_aria2c_download
 from bot.helper.rclone.rclone_download import add_rclone_download
@@ -19,6 +19,7 @@ from bot.helper.pyrogram.message_utils import sendMessage, get_tg_link_content
 from bot.helper.other.tasks_listener import MirrorLeechListener
 from bot.helper.other.help_messages import MIRROR_HELP_MESSAGE
 from bot.helper.other.bulk_links import extract_bulk_links
+from bot.helper.other.token_checker import checkToken
 
 
 @new_task
