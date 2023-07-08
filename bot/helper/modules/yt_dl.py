@@ -18,6 +18,7 @@ from bot.helper.pyrogram.filters import CustomFilters
 from bot.helper.other.tasks_listener import MirrorLeechListener
 from bot.helper.other.help_messages import YT_HELP_MESSAGE
 from bot.helper.other.bulk_links import extract_bulk_links
+from bot.helper.other.token_checker import checkToken
 
 
 @new_task
@@ -238,6 +239,8 @@ async def _mdisk(link, name):
 
 @new_task
 async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
+    if not await checkToken(message):
+        return
     text = message.text.split('\n')
     input_list = text[0].split(' ')
     qual = ''
