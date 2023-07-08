@@ -47,8 +47,8 @@ def checking_access(user_id, button=None):
 
 async def checkToken(message):
     if not await isAdmin(message):
-        token_msg, button = checking_access(message.from_user.id, button)
+        token_msg, buttons = checking_access(message.from_user.id)
         if token_msg:
-            await sendMessage(message, token_msg, buttons=button)
+            await sendMessage(message, token_msg, buttons=buttons.build_menu(1))
             return False
     return True

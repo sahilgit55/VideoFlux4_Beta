@@ -101,6 +101,9 @@ def getConfig(variable, value):
                 elif variable=='TORRENT_TIMEOUT':
                         TORRENT_TIMEOUT = environ.get("TORRENT_TIMEOUT","")
                         return '' if len(TORRENT_TIMEOUT) == 0 else int(TORRENT_TIMEOUT)
+                elif variable=='TOKEN_TIMEOUT':
+                        TOKEN_TIMEOUT = environ.get("TOKEN_TIMEOUT","")
+                        return '' if len(TOKEN_TIMEOUT) == 0 else int(TOKEN_TIMEOUT)
         except Exception as e:
                 LOGGER.error(f'Error Getting Variable {variable}:  {str(e)}')
                 return value
@@ -162,6 +165,7 @@ class Config:
         
         
         TORRENT_TIMEOUT = getConfig('TORRENT_TIMEOUT', '')
+        TOKEN_TIMEOUT = getConfig('TOKEN_TIMEOUT', 3600)
         UPTOBOX_TOKEN = environ.get("UPTOBOX_TOKEN", '')
         EXTENSION_FILTER = environ.get('EXTENSION_FILTER', '')
         YT_DLP_OPTIONS = environ.get('YT_DLP_OPTIONS', '')
