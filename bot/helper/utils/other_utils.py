@@ -8,10 +8,13 @@ from asyncio.subprocess import PIPE
 from functools import partial, wraps
 from concurrent.futures import ThreadPoolExecutor
 from aiohttp import ClientSession
+from uuid import uuid4
 
-from bot import download_dict, download_dict_lock, botStartTime, user_data, config_dict, bot_loop, BotCommands
+from bot import download_dict, download_dict_lock, botStartTime, user_data, config_dict, bot_loop, BotCommands, bot_name, OWNER_ID
 from bot.helper.pyrogram.button_build import ButtonMaker
+from bot.helper.pyrogram.message_utils import sendMessage
 from bot.helper.other.telegraph import telegraph
+from bot.helper.other.shortner import short_url
 
 THREADPOOL = ThreadPoolExecutor(max_workers=1000)
 
@@ -275,31 +278,40 @@ def get_mega_link_type(url):
 def arg_parser(items, arg_base):
     if not items:
         return arg_base
+    bool_arg_set = {'-b', '-e', '-z', '-s', '-j', '-d'}
     t = len(items)
     i = 0
+    arg_start = -1
+
     while i + 1 <= t:
-        part = items[i]
+        part = items[i].strip()
         if part in arg_base:
-            if part in ['-s', '-j']:
+            if arg_start == -1:
+                arg_start = i
+            if i + 1 == t and part in bool_arg_set or part in ['-s', '-j']:
                 arg_base[part] = True
-            elif t == i + 1:
-                if part in ['-b', '-e', '-z', '-s', '-j', '-d']:
-                    arg_base[part] = True
             else:
                 sub_list = []
-                for j in range(i+1, t):
-                    item = items[j]
+                for j in range(i + 1, t):
+                    item = items[j].strip()
                     if item in arg_base:
-                        if part in ['-b', '-e', '-z', '-s', '-j', '-d']:
+                        if part in bool_arg_set and not sub_list:
                             arg_base[part] = True
                         break
-                    sub_list.append(item)
+                    sub_list.append(item.strip())
                     i += 1
                 if sub_list:
                     arg_base[part] = " ".join(sub_list)
         i += 1
-    if items[0] not in arg_base:
-        arg_base['link'] = items[0]
+
+    link = []
+    if items[0].strip() not in arg_base:
+        if arg_start == -1:
+            link.extend(item.strip() for item in items)
+        else:
+            link.extend(items[r].strip() for r in range(arg_start))
+        if link:
+            arg_base['link'] = " ".join(link)
     return arg_base
 
 
@@ -315,6 +327,51 @@ async def get_content_type(url):
 def update_user_ldata(id_, key, value):
     user_data.setdefault(id_, {})
     user_data[id_][key] = value
+
+
+async def isAdmin(message, user_id=None):
+    user = message.from_user or message.sender_chat
+    if user.id == OWNER_ID:
+        return True
+    if message.chat.type == message.chat.type.PRIVATE:
+        return
+    if user_id:
+        member = await message.chat.get_member(user_id)
+    else:
+        member = await message.chat.get_member(user.id)
+    return member.status in [member.status.ADMINISTRATOR, member.status.OWNER] 
+
+
+def checking_access(user_id, button=None):
+    if not config_dict['TOKEN_TIMEOUT']:
+        return None, button
+    user_data.setdefault(user_id, {})
+    data = user_data[user_id]
+    expire = data.get('time')
+    isExpired = (expire is None or expire is not None and (
+        time() - expire) > config_dict['TOKEN_TIMEOUT'])
+    if isExpired:
+        token = data['token'] if expire is None and 'token' in data else str(uuid4())
+        if expire is not None:
+            del data['time']
+        data['token'] = token
+        user_data[user_id].update(data)
+        if button is None:
+            button = ButtonMaker()
+        button.ubutton('Refresh Token', short_url(
+            f'https://t.me/{bot_name}?start={token}'))
+        return 'Token is expired, refresh your token and try again.', button
+    return None, button
+
+
+
+async def checkToken(message):
+    if not await isAdmin(message):
+        token_msg, button = checking_access(message.from_user.id, button)
+        if token_msg:
+            await sendMessage(message, token_msg, buttons=button)
+            return False
+    return True
 
 
 async def cmd_exec(cmd, shell=False):

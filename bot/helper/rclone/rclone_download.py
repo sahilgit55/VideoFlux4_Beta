@@ -3,6 +3,7 @@ from asyncio import gather
 from json import loads
 from random import SystemRandom
 from string import ascii_letters, digits
+from re import escape
 
 from bot import download_dict, download_dict_lock, queue_dict_lock, non_queued_dl, LOGGER
 from bot.helper.utils.other_utils import cmd_exec
@@ -14,13 +15,30 @@ from bot.helper.rclone.rclone_transfer import RcloneTransferHelper
 
 
 async def add_rclone_download(rc_path, config_path, path, name, listener):
-    remote, rc_path = rc_path.split(':', 1)
-    rc_path = rc_path.strip('/')
-
-    cmd1 = ['rclone', 'lsjson', '--fast-list', '--stat', '--no-mimetype',
-            '--no-modtime', '--config', config_path, f'{remote}:{rc_path}']
-    cmd2 = ['rclone', 'size', '--fast-list', '--json',
-            '--config', config_path, f'{remote}:{rc_path}']
+    rc_list = rc_path.strip('/').split('/')
+    _remote = ''.join(f'{j}/' for j in rc_list[:-1])
+    _name = rc_list[-1]
+    
+    cmd1 = ["rclone",
+                    "lsjson",
+                    f"--config={config_path}",
+                    f'{_remote}',
+                    "--files-only",
+                    "-f",
+                    f"+ {escape(_name)}",
+                    "-f",
+                    "- *"]
+    cmd2 = ["rclone",
+            "size",
+            '--json',
+            f"--config={config_path}",
+            f'{_remote}',
+            "-f",
+            f"+ {escape(_name)}",
+            "-f",
+            "- *"]
+    LOGGER.info(str(cmd1))
+    LOGGER.info(str(cmd2))
     res1, res2 = await gather(cmd_exec(cmd1), cmd_exec(cmd2))
     if res1[2] != res2[2] != 0:
         if res1[2] != -9:
@@ -28,8 +46,10 @@ async def add_rclone_download(rc_path, config_path, path, name, listener):
             msg = f'Error: While getting rclone stat/size. Path: {remote}:{rc_path}. Stderr: {err[:4000]}'
             await sendMessage(listener.message, msg)
         return
-    rstat = loads(res1[0])
+    rstat = loads(res1[0])[0]
     rsize = loads(res2[0])
+    remote, rc_path = rc_path.split(':', 1)
+    rc_path = rc_path.strip('/')
     if rstat['IsDir']:
         if not name:
             name = rc_path.rsplit('/', 1)[-1] if rc_path else remote
@@ -69,4 +89,4 @@ async def add_rclone_download(rc_path, config_path, path, name, listener):
         await sendStatusMessage(listener.message)
         LOGGER.info(f"Download with rclone: {rc_path}")
 
-    await RCTransfer.download(remote, rc_path, config_path, path)
+    await RCTransfer.download(remote, rc_path, config_path, path, _remote=_remote, _name= _name)

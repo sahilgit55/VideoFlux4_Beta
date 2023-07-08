@@ -14,3 +14,4 @@ rclone.conf
 *.session-journal
 Thumbnails/*
 t.py
+test.py

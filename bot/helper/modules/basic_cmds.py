@@ -9,8 +9,9 @@ from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
 from asyncio import gather, create_subprocess_exec
 from heroku3 import from_key
+from uuid import uuid4
 
-from bot import bot, botStartTime, log_file, BotCommands, commands_string, config_dict, LOGGER
+from bot import bot, botStartTime, log_file, BotCommands, commands_string, config_dict, LOGGER, user_data
 from bot.helper.pyrogram.message_utils import sendFile, sendMessage
 from bot.helper.pyrogram.button_build import ButtonMaker
 from bot.helper.utils.other_utils import sync_to_async, cmd_exec, get_readable_file_size, get_readable_time, get_logs_msg
@@ -47,12 +48,25 @@ async def stats(_, message):
 
 
 async def start(_, message):
-    text = f"Hi {message.from_user.mention(style='md')}, I Am Alive."
-    buttons = ButtonMaker()
-    buttons.ubutton("⭐ Bot By 𝚂𝚊𝚑𝚒𝚕 ⭐", "https://t.me/nik66")
-    buttons.ubutton("❤ Join Channel ❤", "https://t.me/nik66x")
-    await sendMessage(message, text, buttons=buttons.build_menu(1))
-    return
+    if len(message.command) > 1:
+        userid = message.from_user.id
+        input_token = message.command[1]
+        if userid not in user_data:
+            return await sendMessage(message, 'Who are you?')
+        data = user_data[userid]
+        if 'token' not in data or data['token'] != input_token:
+            return await sendMessage(message, 'This token is already expired')
+        data['token'] = str(uuid4())
+        data['time'] = time()
+        user_data[userid].update(data)
+        return await sendMessage(message, 'Token refreshed successfully!')
+    else:
+        text = f"Hi {message.from_user.mention(style='md')}, I Am Alive."
+        buttons = ButtonMaker()
+        buttons.ubutton("⭐ Bot By 𝚂𝚊𝚑𝚒𝚕 ⭐", "https://t.me/nik66")
+        buttons.ubutton("❤ Join Channel ❤", "https://t.me/nik66x")
+        await sendMessage(message, text, buttons=buttons.build_menu(1))
+        return
 
 
 async def restart(_, message):

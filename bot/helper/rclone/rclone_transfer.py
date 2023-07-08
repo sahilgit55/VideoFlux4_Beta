@@ -1,6 +1,6 @@
 from asyncio import create_subprocess_exec, gather
 from asyncio.subprocess import PIPE
-from re import findall as re_findall
+from re import findall as re_findall, escape
 from json import loads
 from aiofiles.os import path as aiopath, mkdir, listdir
 from aiofiles import open as aiopen
@@ -107,6 +107,10 @@ class RcloneTransferHelper:
 
         if return_code == 0:
             await self.__listener.onDownloadComplete()
+        if return_code == 1:
+            error = (await self.__proc.stderr.read()).decode().strip()
+            LOGGER.error(f"Some Error Occured But Trying To Upload: {error}")
+            await self.__listener.onDownloadComplete()
         elif return_code != -9:
             error = (await self.__proc.stderr.read()).decode().strip()
             if not error and remote_type == 'drive' and config_dict['USE_SERVICE_ACCOUNTS']:
@@ -126,7 +130,7 @@ class RcloneTransferHelper:
 
             await self.__listener.onDownloadError(error[:4000])
 
-    async def download(self, remote, rc_path, config_path, path):
+    async def download(self, remote, rc_path, config_path, path, _remote=None, _name=None):
         self.__is_download = True
         try:
             remote_opts = await self.__get_remote_options(config_path, remote)
@@ -147,8 +151,8 @@ class RcloneTransferHelper:
 
         rcflags = self.__listener.rcFlags or config_dict['RCLONE_FLAGS']
         cmd = self.__getUpdatedCommand(
-            config_path, f'{remote}:{rc_path}', path, rcflags, 'copy')
-
+            config_path, f'{remote}:{rc_path}', path, rcflags, 'copy', _remote=_remote, _name= _name)
+        
         if remote_type == 'drive' and not config_dict['RCLONE_FLAGS'] and not self.__listener.rcFlags:
             cmd.append('--drive-acknowledge-abuse')
         elif remote_type != 'drive':
@@ -352,11 +356,21 @@ class RcloneTransferHelper:
                     return None, None
 
     @staticmethod
-    def __getUpdatedCommand(config_path, source, destination, rcflags, method):
+    def __getUpdatedCommand(config_path, source, destination, rcflags, method, _remote=None, _name=None):
         ext = '*.{' + ','.join(GLOBAL_EXTENSION_FILTER) + '}'
-        cmd = ['rclone', method, '--fast-list', '--config', config_path, '-P', source, destination,
-               '--exclude', ext, '--ignore-case', '--low-level-retries', '1', '-M', '--log-file',
-               'rlog.txt', '--log-level', 'DEBUG']
+        if not _remote and _name:
+            cmd = ['rclone', method, '--fast-list', '--config', config_path, '-P', source, destination,
+                '--exclude', ext, '--ignore-case', '--low-level-retries', '1', '-M']
+        else:
+            cmd = ['rclone', method, '--fast-list', '--config', config_path, '-P',
+                   f'{_remote}',
+                   "-f",
+                    f"+ {escape(_name)}",
+                    "-f",
+                    "- *",
+                    destination,
+                    '--exclude', ext, '--ignore-case', '--low-level-retries', '1', '-M']
+            LOGGER.info(str(cmd))
         if rcflags:
             rcflags = rcflags.split('|')
             for flag in rcflags:

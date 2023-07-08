@@ -12,6 +12,7 @@ config_dict = {}
 user_data = {}
 aria2_options = {}
 GLOBAL_EXTENSION_FILTER = ['aria2']
+shorteneres_list = []
 
 
 def dwFromUrl(url, filename):
@@ -220,3 +221,11 @@ if SET_COMMANDS:
         LOGGER.info("Bot Commands Will Be Setup")
 else:
         LOGGER.info("Bot Commands Will Not Be Setup")
+
+if exists('shorteners.txt'):
+    with open('shorteners.txt', 'r+') as f:
+        lines = f.readlines()
+        for line in lines:
+            temp = line.strip().split()
+            if len(temp) == 2:
+                shorteneres_list.append({'domain': temp[0],'api_key': temp[1]})

@@ -89,7 +89,7 @@ class DbManger:
             await self.update_deploy_config()
         else:
             self.__conn.close
-
+        
     async def update_user_data(self, user_id):
         if self.__err:
             return
@@ -98,7 +98,11 @@ class DbManger:
             del data['thumb']
         if data.get('rclone'):
             del data['rclone']
-        await self.__db.users.replace_one({'_id': user_id}, data, upsert=True)
+        if data.get('token'):
+            del data['token']
+        if data.get('time'):
+            del data['time']
+        await self.__db.users[bot_id].replace_one({'_id': user_id}, data, upsert=True)
         self.__conn.close
 
     async def update_user_doc(self, user_id, key, path=''):

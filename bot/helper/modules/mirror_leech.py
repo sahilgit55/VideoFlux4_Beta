@@ -7,7 +7,7 @@ from asyncio import sleep
 from aiofiles.os import path as aiopath
 
 from bot import bot, DOWNLOAD_DIR, LOGGER, config_dict, BotCommands
-from bot.helper.utils.other_utils import is_url, is_magnet, is_mega_link, is_gdrive_link, get_content_type, new_task, sync_to_async, is_rclone_path, is_telegram_link, arg_parser
+from bot.helper.utils.other_utils import is_url, is_magnet, is_mega_link, is_gdrive_link, get_content_type, new_task, sync_to_async, is_rclone_path, is_telegram_link, arg_parser, checkToken
 from bot.helper.other.exceptions import DirectDownloadLinkException
 from bot.helper.aria.aria_engine import add_aria2c_download
 from bot.helper.rclone.rclone_download import add_rclone_download
@@ -23,6 +23,8 @@ from bot.helper.other.bulk_links import extract_bulk_links
 
 @new_task
 async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=None, bulk=[]):
+    if not await checkToken(message):
+        return
     text = message.text.split('\n')
     input_list = text[0].split(' ')
 
