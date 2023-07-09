@@ -14,29 +14,7 @@ from bot.helper.status.queue_status import QueueStatus
 from bot.helper.rclone.rclone_transfer import RcloneTransferHelper
 
 
-async def add_rclone_download(rc_path, config_path, path, name, listener):
-    rc_list = rc_path.strip('/').split('/')
-    _remote = ''.join(f'{j}/' for j in rc_list[:-1])
-    _name = rc_list[-1]
-    file = True
-    cmd1 = ["rclone",
-                    "lsjson",
-                    f"--config={config_path}",
-                    f'{_remote}',
-                    "--files-only",
-                    "-f",
-                    f"+ {escape(_name)}",
-                    "-f",
-                    "- *"]
-    cmd2 = ["rclone",
-            "size",
-            '--json',
-            f"--config={config_path}",
-            f'{_remote}',
-            "-f",
-            f"+ {escape(_name)}",
-            "-f",
-            "- *"]
+async def getRespData(cmd1, cmd2, remote, rc_path, cmd_type=1):
     LOGGER.info(str(cmd1))
     LOGGER.info(str(cmd2))
     res1, res2 = await gather(cmd_exec(cmd1), cmd_exec(cmd2))
@@ -44,33 +22,66 @@ async def add_rclone_download(rc_path, config_path, path, name, listener):
         if res1[2] != -9:
             err = res1[1] or res2[1]
             msg = f'Error: While getting rclone stat/size. Path: {remote}:{rc_path}. Stderr: {err[:4000]}'
-            await sendMessage(listener.message, msg)
-        return
+        return None, msg
     try:
-            rstat = loads(res1[0])[0]
+            if cmd_type==1:
+                    rstat = loads(res1[0])
+            else:
+                    rstat = loads(res1[0])[0]
             rsize = loads(res2[0])
+            return rstat, rsize
     except Exception as e:
             LOGGER.error(str(e))
-            file = False
-            remote, rc_path = rc_path.split(':', 1)
-            rc_path = rc_path.strip('/')
-            cmd1 = ['rclone', 'lsjson', '--fast-list', '--stat', '--no-mimetype',
-                '--no-modtime', '--config', config_path, f'{remote}:{rc_path}']
-            cmd2 = ['rclone', 'size', '--fast-list', '--json',
-                    '--config', config_path, f'{remote}:{rc_path}']
-            res1, res2 = await gather(cmd_exec(cmd1), cmd_exec(cmd2))
-            if res1[2] != res2[2] != 0:
-                if res1[2] != -9:
-                    msg = f'Error: While getting rclone stat/size. Path: {remote}:{rc_path}. Stderr: {res1[1][:4000]}'
-                    await sendMessage(listener.message, msg)
-                return
-            rstat = loads(res1[0])
-            rsize = loads(res2[0])
-            _remote = None
-            _name = None
-    if file:
-        remote, rc_path = rc_path.split(':', 1)
-        rc_path = rc_path.strip('/')
+            LOGGER.error(str(res1))
+            LOGGER.error(str(res2))
+            return None, None
+
+
+
+async def add_rclone_download(rc_path, config_path, path, name, listener):
+    _rc_path = rc_path
+    _remote = None
+    _name = None
+    
+    remote, rc_path = rc_path.split(':', 1)
+    rc_path = rc_path.strip('/')
+    
+    cmd1 = ['rclone', 'lsjson', '--fast-list', '--stat', '--no-mimetype',
+        '--no-modtime', '--config', config_path, f'{remote}:{rc_path}']
+    cmd2 = ['rclone', 'size', '--fast-list', '--json',
+            '--config', config_path, f'{remote}:{rc_path}']
+    
+    rstat, rsize = await getRespData(cmd1, cmd2, remote, rc_path, cmd_type=1)
+    if not rstat:
+        if rsize:
+                await sendMessage(listener.message, rsize)
+        
+        rc_list = _rc_path.strip('/').split('/')
+        _remote = ''.join(f'{j}/' for j in rc_list[:-1])
+        _name = rc_list[-1]
+        cmd1 = ["rclone",
+                        "lsjson",
+                        f"--config={config_path}",
+                        f'{_remote}',
+                        "--files-only",
+                        "-f",
+                        f"+ {escape(_name)}",
+                        "-f",
+                        "- *"]
+        cmd2 = ["rclone",
+                "size",
+                '--json',
+                f"--config={config_path}",
+                f'{_remote}',
+                "-f",
+                f"+ {escape(_name)}",
+                "-f",
+                "- *"]
+        rstat, rsize = await getRespData(cmd1, cmd2, remote, rc_path, cmd_type=2)
+        if not rstat:
+            await sendMessage(listener.message, 'Task failed! Check log')
+            return
+
     if rstat['IsDir']:
         if not name:
             name = rc_path.rsplit('/', 1)[-1] if rc_path else remote

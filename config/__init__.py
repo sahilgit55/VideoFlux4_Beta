@@ -165,7 +165,7 @@ class Config:
         
         
         TORRENT_TIMEOUT = getConfig('TORRENT_TIMEOUT', '')
-        TOKEN_TIMEOUT = getConfig('TOKEN_TIMEOUT', 3600)
+        TOKEN_TIMEOUT = getConfig('TOKEN_TIMEOUT', '')
         UPTOBOX_TOKEN = environ.get("UPTOBOX_TOKEN", '')
         EXTENSION_FILTER = environ.get('EXTENSION_FILTER', '')
         YT_DLP_OPTIONS = environ.get('YT_DLP_OPTIONS', '')
